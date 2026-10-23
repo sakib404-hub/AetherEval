@@ -1,11 +1,21 @@
 import status from "http-status";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
-import { TPostSubmissionPayload } from "./submission.validation";
+import {
+	TPostSubmissionPayload,
+	TUpdateSubmissionPayload,
+} from "./submission.validation";
 import { RequestUser } from "../../middleware/checkAuthentication";
-import { Role, SubmissionStatus, UserStatus } from "../../../prisma/generated/prisma/enums";
+import {
+	Role,
+	SubmissionStatus,
+	UserStatus,
+} from "../../../prisma/generated/prisma/enums";
 
-const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUser) => {
+const postSubmission = async (
+	payload: TPostSubmissionPayload,
+	user?: RequestUser,
+) => {
 	const studentId = user?.userId || payload.studentId;
 
 	// 1. Identity & Role authorization check
@@ -183,6 +193,7 @@ const getSingleSubmission = async (id: string, user?: RequestUser) => {
 		throw new AppError(status.NOT_FOUND, "Submission not found.");
 	}
 
+	// Authorization check: students can only access their own submissions
 	if (user?.role === Role.STUDENT && submission.studentId !== user.userId) {
 		throw new AppError(
 			status.FORBIDDEN,
@@ -193,8 +204,93 @@ const getSingleSubmission = async (id: string, user?: RequestUser) => {
 	return submission;
 };
 
+const editSubmission = async (
+	id: string,
+	payload: TUpdateSubmissionPayload,
+	user?: RequestUser,
+) => {
+	if (!id) {
+		throw new AppError(status.BAD_REQUEST, "Submission ID is required.");
+	}
+
+	const submission = await prisma.submission.findUnique({
+		where: { id },
+	});
+
+	if (!submission) {
+		throw new AppError(status.NOT_FOUND, "Submission not found.");
+	}
+
+	if (user && submission.studentId !== user.userId) {
+		throw new AppError(
+			status.FORBIDDEN,
+			"You do not have permission to edit this submission.",
+		);
+	}
+
+	if (submission.status !== SubmissionStatus.REJECTED) {
+		throw new AppError(
+			status.BAD_REQUEST,
+			`You can only edit a submission if its status is REJECTED. Current status: ${submission.status}.`,
+		);
+	}
+
+	if (!payload || Object.keys(payload).length === 0) {
+		throw new AppError(
+			status.BAD_REQUEST,
+			"Please provide at least one field to update.",
+		);
+	}
+
+	const finalRepoUrl = payload.repoUrl
+		? payload.repoUrl.trim()
+		: submission.repoUrl;
+	const finalLiveLink = payload.liveLink
+		? payload.liveLink.trim()
+		: submission.liveLink;
+
+	if (finalRepoUrl.toLowerCase() === finalLiveLink.toLowerCase()) {
+		throw new AppError(
+			status.BAD_REQUEST,
+			"Live link cannot be the same as the repository URL.",
+		);
+	}
+
+	if (payload.repoUrl && payload.repoUrl.trim() !== submission.repoUrl) {
+		const existingRepo = await prisma.submission.findUnique({
+			where: { repoUrl: payload.repoUrl.trim() },
+		});
+
+		if (existingRepo && existingRepo.id !== id) {
+			throw new AppError(
+				status.CONFLICT,
+				"A submission with this repository URL already exists.",
+			);
+		}
+	}
+
+	// Update the submission and reset status to PENDING for re-evaluation
+	const updatedSubmission = await prisma.submission.update({
+		where: { id },
+		data: {
+			...(payload.projectName && { projectName: payload.projectName.trim() }),
+			...(payload.repoUrl && { repoUrl: payload.repoUrl.trim() }),
+			...(payload.liveLink && { liveLink: payload.liveLink.trim() }),
+			...(payload.description && { description: payload.description.trim() }),
+			status: SubmissionStatus.PENDING,
+			reviewComment: null,
+			reviewedAt: null,
+			reviewedById: null,
+		},
+	});
+
+	return updatedSubmission;
+};
+
 export const SubmissionService = {
 	postSubmission,
 	getMySubmissions,
 	getSingleSubmission,
+	editSubmission,
+	updateSubmission: editSubmission,
 };

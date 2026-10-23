@@ -24,10 +24,36 @@ const postSubmissionValidationSchema = z.object({
 		.trim(),
 });
 
+const updateSubmissionValidationSchema = z.object({
+	projectName: z
+		.string()
+		.min(1, "Project name cannot be empty")
+		.trim()
+		.optional(),
+	repoUrl: z
+		.string()
+		.url("Please provide a valid repository URL")
+		.trim()
+		.optional(),
+	liveLink: z
+		.string()
+		.url("Please provide a valid live link URL")
+		.trim()
+		.optional(),
+	description: z
+		.string()
+		.min(1, "Description cannot be empty")
+		.trim()
+		.optional(),
+});
+
 export const SubmissionValidation = {
 	postSubmissionValidationSchema,
 	createSubmissionValidationSchema: postSubmissionValidationSchema,
+	updateSubmissionValidationSchema,
+	editSubmissionValidationSchema: updateSubmissionValidationSchema,
 };
 
 export type TPostSubmissionPayload = z.infer<typeof postSubmissionValidationSchema>;
 export type TCreateSubmissionPayload = TPostSubmissionPayload;
+export type TUpdateSubmissionPayload = z.infer<typeof updateSubmissionValidationSchema>;

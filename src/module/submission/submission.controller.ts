@@ -56,8 +56,31 @@ const getSingleSubmission = catchAsync(
 	},
 );
 
+const editSubmission = catchAsync(
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const { id } = req.params;
+		const user = req.user;
+		const payload = req.body;
+
+		const result = await SubmissionService.editSubmission(
+			id as string,
+			payload,
+			user,
+		);
+
+		return sendResponse(res, {
+			success: true,
+			statusCode: status.OK,
+			message: "Submission updated and resubmitted successfully.",
+			data: result,
+		});
+	},
+);
+
 export const SubmissionController = {
 	postSubmission,
 	getMySubmissions,
 	getSingleSubmission,
+	editSubmission,
+	updateSubmission: editSubmission,
 };

@@ -11,10 +11,23 @@ router.post(
 	"/",
 	checkAuth(Role.STUDENT),
 	validateRequest(SubmissionValidation.postSubmissionValidationSchema),
-	SubmissionController.postSubmission
+	SubmissionController.postSubmission,
 );
-
-router.get("/my", checkAuth(Role.STUDENT), SubmissionController.getMySubmissions);
-router.get("/:id", checkAuth(Role.ADMIN, Role.MENTOR, Role.STUDENT), SubmissionController.getSingleSubmission);
+router.get(
+	"/my",
+	checkAuth(Role.STUDENT),
+	SubmissionController.getMySubmissions,
+);
+router.get(
+	"/:id",
+	checkAuth(Role.ADMIN, Role.MENTOR, Role.STUDENT),
+	SubmissionController.getSingleSubmission,
+);
+router.patch(
+	"/:id",
+	checkAuth(Role.STUDENT),
+	validateRequest(SubmissionValidation.updateSubmissionValidationSchema),
+	SubmissionController.editSubmission,
+);
 
 export const SubmissionRouter = router;
