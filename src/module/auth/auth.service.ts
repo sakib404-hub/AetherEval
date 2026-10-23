@@ -84,19 +84,63 @@ const userLogin = async (payLoad : UserLogin) => {
         role: isUserExist.role,
     };
 
-    const accessToken = jwtUtility.createToken(jwtPayload, config.jwt.accessSecret, config.jwt.accessExpiresIn as SignOptions)
+    const accessToken = jwtUtility.createToken(
+        jwtPayload,
+        config.jwt.accessSecret as string,
+        config.jwt.accessExpiresIn as SignOptions
+    );
 
-    const refreshToken = jwtUtility.createToken(jwtPayload, config.jwt.refreshSecret, config.jwt.refreshExpiresIn as SignOptions);
-
+    const refreshToken = jwtUtility.createToken(
+        jwtPayload,
+        config.jwt.refreshSecret as string,
+        config.jwt.refreshExpiresIn as SignOptions
+    );
 
     return {
         accessToken,
         refreshToken,
+        user: {
+            id: isUserExist.id,
+            name: isUserExist.name,
+            email: isUserExist.email,
+            role: isUserExist.role,
+            status: isUserExist.status,
+        },
     };
 };
 
-const getMe = async () => {
-    // TODO: Get authenticated user profile
+const getMe = async (userId: string) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            status: true,
+            expertise: true,
+            bio: true,
+            portfolioUrl: true,
+            rejectionReason: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    if (user.status === UserStatus.BLOCKED) {
+        throw new AppError(
+            status.FORBIDDEN,
+            "Your account has been blocked. Please contact support."
+        );
+    }
+
+    return user;
 };
 
 export const AuthServices = {
