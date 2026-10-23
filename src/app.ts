@@ -8,6 +8,7 @@ import { notFound } from "./middleware/notFound";
 import { AuthRouter } from "./module/auth/auth.route";
 import { SubmissionRouter } from "./module/submission/submission.route";
 import { MentorRouter } from "./module/mentor/mentor.route";
+import { AdminRouter } from "./module/admin/admin.route";
 
 
 const app : Application = express();
@@ -58,6 +59,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/submission', SubmissionRouter);
 app.use('/api/v1/mentor', MentorRouter);
+app.use('/api/v1/admin', AdminRouter);
 
 
 app.use(globalErrorHandler);
