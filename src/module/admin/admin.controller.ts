@@ -3,6 +3,7 @@ import { catchAsync } from "../../utility/catchAsync";
 import { AdminServices } from "./admin.service";
 import { sendResponse } from "../../utility/sendResponse";
 import status from "http-status";
+import { UserStatus } from "../../../prisma/generated/prisma/enums";
 
 const getAllMentors = catchAsync(
 	async (req: Request, res: Response, _next: NextFunction) => {
@@ -34,12 +35,35 @@ const getMentorById = catchAsync(
 	},
 );
 
-const approveMentor = catchAsync(
-	async (_req: Request, _res: Response, _next: NextFunction) => {},
+const updateMentorStatus = catchAsync(
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const { mentorId } = req.params;
+		const payload = req.body;
+
+		const result = await AdminServices.updateMentorStatus(
+			mentorId as string,
+			payload,
+		);
+
+		const actionMessage =
+			payload.status === UserStatus.ACTIVE
+				? "Mentor approved successfully."
+				: payload.status === UserStatus.REJECTED
+					? "Mentor rejected successfully."
+					: `Mentor status updated to ${payload.status} successfully.`;
+
+		return sendResponse(res, {
+			success: true,
+			statusCode: status.OK,
+			message: actionMessage,
+			data: result,
+		});
+	},
 );
+
 
 export const AdminController = {
 	getAllMentors,
 	getMentorById,
-	approveMentor,
+	updateMentorStatus,
 };
