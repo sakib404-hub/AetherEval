@@ -47,8 +47,29 @@ const updateSubmissionStatus = catchAsync(
 	},
 );
 
+const getAllSubmissions = catchAsync(
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const query = req.query;
+		const user = req.user;
+
+		const result = await MentorServices.getAllSubmissions(
+			query,
+			user?.userId as string,
+		);
+
+		return sendResponse(res, {
+			success: true,
+			statusCode: status.OK,
+			message: "All submissions retrieved successfully.",
+			data: result,
+		});
+	},
+);
+
 export const MentorController = {
 	registerAsMentor,
 	updateSubmissionStatus,
 	updateSubmissionSatus: updateSubmissionStatus,
+	getAllSubmissions,
+	getAllSubmission: getAllSubmissions,
 };

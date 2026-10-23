@@ -8,6 +8,7 @@ import {
 	SubmissionStatus,
 	UserStatus,
 } from "../../../prisma/generated/prisma/enums";
+import { Prisma } from "../../../prisma/generated/prisma/client";
 import {
 	TRegisterAsMentorPayload,
 	TUpdateSubmissionStatusPayload,
@@ -146,8 +147,81 @@ const updateSubmissionStatus = async (
 	return updatedSubmission;
 };
 
+const getAllSubmissions = async (
+	query?: {
+		status?: SubmissionStatus | string;
+		studentId?: string;
+		projectName?: string;
+	},
+	mentorId?: string,
+) => {
+	if (mentorId) {
+		const mentor = await prisma.user.findUnique({
+			where: { id: mentorId },
+		});
+
+		if (!mentor) {
+			throw new AppError(status.NOT_FOUND, "Mentor account not found.");
+		}
+
+		if (mentor.role === Role.MENTOR && mentor.status !== UserStatus.ACTIVE) {
+			throw new AppError(
+				status.FORBIDDEN,
+				"Only active mentors can access student submissions.",
+			);
+		}
+	}
+
+	const whereConditions: Prisma.SubmissionWhereInput = {};
+
+	if (query?.status) {
+		whereConditions.status = query.status as SubmissionStatus;
+	}
+
+	if (query?.studentId) {
+		whereConditions.studentId = query.studentId;
+	}
+
+	if (query?.projectName) {
+		whereConditions.projectName = {
+			contains: query.projectName,
+			mode: "insensitive",
+		};
+	}
+
+	const submissions = await prisma.submission.findMany({
+		where: whereConditions,
+		include: {
+			student: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+			reviewedBy: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+					expertise: true,
+				},
+			},
+		},
+		orderBy: {
+			createdAt: "desc",
+		},
+	});
+
+	return submissions;
+};
+
 export const MentorServices = {
 	registerAsMentor,
 	updateSubmissionStatus,
 	updateSubmissionSatus: updateSubmissionStatus,
+	getAllSubmissions,
+	getAllSubmission: getAllSubmissions,
 };
