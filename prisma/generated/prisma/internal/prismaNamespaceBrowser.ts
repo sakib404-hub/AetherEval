@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Submission: 'Submission',
   User: 'User'
 } as const
 
@@ -68,6 +69,24 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const SubmissionScalarFieldEnum = {
+  id: 'id',
+  projectName: 'projectName',
+  repoUrl: 'repoUrl',
+  liveLink: 'liveLink',
+  description: 'description',
+  status: 'status',
+  reviewComment: 'reviewComment',
+  reviewedAt: 'reviewedAt',
+  studentId: 'studentId',
+  reviewedById: 'reviewedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubmissionScalarFieldEnum = (typeof SubmissionScalarFieldEnum)[keyof typeof SubmissionScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
