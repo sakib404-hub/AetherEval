@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SubmissionStatus } from "../../../prisma/generated/prisma/enums";
 
 const registerAsMentorValidationSchema = z.object({
 	name: z
@@ -26,10 +27,43 @@ const registerAsMentorValidationSchema = z.object({
 		.trim(),
 });
 
+const updateSubmissionStatusValidationSchema = z
+	.object({
+		status: z.enum(
+			[SubmissionStatus.APPROVED, SubmissionStatus.REJECTED],
+			{
+				error: "Status must be either APPROVED or REJECTED",
+			},
+		),
+		reviewComment: z.string().trim().optional(),
+		rejectionReason: z.string().trim().optional(),
+	})
+	.refine(
+		(data) => {
+			if (data.status === SubmissionStatus.REJECTED) {
+				const comment =
+					(data.reviewComment || data.rejectionReason || "").trim();
+				return comment.length > 0;
+			}
+			return true;
+		},
+		{
+			message:
+				"Rejection reason is required when rejecting a submission.",
+			path: ["reviewComment"],
+		},
+	);
+
 export const MentorValidation = {
 	registerAsMentorValidationSchema,
+	updateSubmissionStatusValidationSchema,
+	updateSubmissionSatusValidationSchema: updateSubmissionStatusValidationSchema,
 };
 
 export type TRegisterAsMentorPayload = z.infer<
 	typeof registerAsMentorValidationSchema
+>;
+
+export type TUpdateSubmissionStatusPayload = z.infer<
+	typeof updateSubmissionStatusValidationSchema
 >;

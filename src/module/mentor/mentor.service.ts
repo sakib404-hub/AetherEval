@@ -3,8 +3,15 @@ import status from "http-status";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
 import { config } from "../../config/config";
-import { Role, UserStatus } from "../../../prisma/generated/prisma/enums";
-import { TRegisterAsMentorPayload } from "./mentor.validation";
+import {
+	Role,
+	SubmissionStatus,
+	UserStatus,
+} from "../../../prisma/generated/prisma/enums";
+import {
+	TRegisterAsMentorPayload,
+	TUpdateSubmissionStatusPayload,
+} from "./mentor.validation";
 
 const registerAsMentor = async (payload: TRegisterAsMentorPayload) => {
 	const email = payload.email.trim().toLowerCase();
@@ -55,6 +62,92 @@ const registerAsMentor = async (payload: TRegisterAsMentorPayload) => {
 	return mentor;
 };
 
+const updateSubmissionStatus = async (
+	submissionId: string,
+	payload: TUpdateSubmissionStatusPayload,
+	mentorId: string,
+) => {
+	if (!submissionId) {
+		throw new AppError(status.BAD_REQUEST, "Submission ID is required.");
+	}
+
+	const mentor = await prisma.user.findUnique({
+		where: { id: mentorId },
+	});
+
+	if (!mentor) {
+		throw new AppError(status.NOT_FOUND, "Mentor account not found.");
+	}
+
+	if (mentor.status !== UserStatus.ACTIVE) {
+		throw new AppError(
+			status.FORBIDDEN,
+			"Only active mentors can review and update submissions.",
+		);
+	}
+
+	const submission = await prisma.submission.findUnique({
+		where: { id: submissionId },
+	});
+
+	if (!submission) {
+		throw new AppError(status.NOT_FOUND, "Submission not found.");
+	}
+
+	if (submission.status === payload.status) {
+		throw new AppError(
+			status.BAD_REQUEST,
+			`Submission status is already ${payload.status}.`,
+		);
+	}
+
+	const comment = (
+		payload.reviewComment ||
+		payload.rejectionReason ||
+		""
+	).trim();
+
+	if (payload.status === SubmissionStatus.REJECTED && !comment) {
+		throw new AppError(
+			status.BAD_REQUEST,
+			"Rejection reason is required when rejecting a submission.",
+		);
+	}
+
+	const updatedSubmission = await prisma.submission.update({
+		where: { id: submissionId },
+		data: {
+			status: payload.status,
+			reviewComment: comment || null,
+			reviewedAt: new Date(),
+			reviewedById: mentorId,
+		},
+		include: {
+			student: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+			reviewedBy: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+					expertise: true,
+				},
+			},
+		},
+	});
+
+	return updatedSubmission;
+};
+
 export const MentorServices = {
 	registerAsMentor,
+	updateSubmissionStatus,
+	updateSubmissionSatus: updateSubmissionStatus,
 };

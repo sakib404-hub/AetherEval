@@ -613,6 +613,7 @@ export const SubmissionScalarFieldEnum = {
   description: 'description',
   status: 'status',
   reviewComment: 'reviewComment',
+  rejectionReason: 'rejectionReason',
   reviewedAt: 'reviewedAt',
   studentId: 'studentId',
   reviewedById: 'reviewedById',

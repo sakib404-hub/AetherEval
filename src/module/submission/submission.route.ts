@@ -18,11 +18,13 @@ router.get(
 	checkAuth(Role.STUDENT),
 	SubmissionController.getMySubmissions,
 );
+
 router.get(
 	"/:id",
 	checkAuth(Role.ADMIN, Role.MENTOR, Role.STUDENT),
 	SubmissionController.getSingleSubmission,
 );
+
 router.patch(
 	"/:id",
 	checkAuth(Role.STUDENT),

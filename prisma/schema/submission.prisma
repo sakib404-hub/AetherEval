@@ -6,6 +6,7 @@ model Submission {
   description   String           @db.Text
   status        SubmissionStatus @default(PENDING)
   reviewComment String?          @db.Text
+  rejectionReason String?
   reviewedAt    DateTime?
 
   studentId     String

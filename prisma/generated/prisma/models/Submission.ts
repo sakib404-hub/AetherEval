@@ -32,6 +32,7 @@ export type SubmissionMinAggregateOutputType = {
   description: string | null
   status: $Enums.SubmissionStatus | null
   reviewComment: string | null
+  rejectionReason: string | null
   reviewedAt: Date | null
   studentId: string | null
   reviewedById: string | null
@@ -47,6 +48,7 @@ export type SubmissionMaxAggregateOutputType = {
   description: string | null
   status: $Enums.SubmissionStatus | null
   reviewComment: string | null
+  rejectionReason: string | null
   reviewedAt: Date | null
   studentId: string | null
   reviewedById: string | null
@@ -62,6 +64,7 @@ export type SubmissionCountAggregateOutputType = {
   description: number
   status: number
   reviewComment: number
+  rejectionReason: number
   reviewedAt: number
   studentId: number
   reviewedById: number
@@ -79,6 +82,7 @@ export type SubmissionMinAggregateInputType = {
   description?: true
   status?: true
   reviewComment?: true
+  rejectionReason?: true
   reviewedAt?: true
   studentId?: true
   reviewedById?: true
@@ -94,6 +98,7 @@ export type SubmissionMaxAggregateInputType = {
   description?: true
   status?: true
   reviewComment?: true
+  rejectionReason?: true
   reviewedAt?: true
   studentId?: true
   reviewedById?: true
@@ -109,6 +114,7 @@ export type SubmissionCountAggregateInputType = {
   description?: true
   status?: true
   reviewComment?: true
+  rejectionReason?: true
   reviewedAt?: true
   studentId?: true
   reviewedById?: true
@@ -197,6 +203,7 @@ export type SubmissionGroupByOutputType = {
   description: string
   status: $Enums.SubmissionStatus
   reviewComment: string | null
+  rejectionReason: string | null
   reviewedAt: Date | null
   studentId: string
   reviewedById: string | null
@@ -233,6 +240,7 @@ export type SubmissionWhereInput = {
   description?: Prisma.StringFilter<"Submission"> | string
   status?: Prisma.EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
   reviewComment?: Prisma.StringNullableFilter<"Submission"> | string | null
+  rejectionReason?: Prisma.StringNullableFilter<"Submission"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Submission"> | Date | string | null
   studentId?: Prisma.StringFilter<"Submission"> | string
   reviewedById?: Prisma.StringNullableFilter<"Submission"> | string | null
@@ -250,6 +258,7 @@ export type SubmissionOrderByWithRelationInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewComment?: Prisma.SortOrderInput | Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   studentId?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -270,6 +279,7 @@ export type SubmissionWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringFilter<"Submission"> | string
   status?: Prisma.EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
   reviewComment?: Prisma.StringNullableFilter<"Submission"> | string | null
+  rejectionReason?: Prisma.StringNullableFilter<"Submission"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Submission"> | Date | string | null
   studentId?: Prisma.StringFilter<"Submission"> | string
   reviewedById?: Prisma.StringNullableFilter<"Submission"> | string | null
@@ -287,6 +297,7 @@ export type SubmissionOrderByWithAggregationInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewComment?: Prisma.SortOrderInput | Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   studentId?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -308,6 +319,7 @@ export type SubmissionScalarWhereWithAggregatesInput = {
   description?: Prisma.StringWithAggregatesFilter<"Submission"> | string
   status?: Prisma.EnumSubmissionStatusWithAggregatesFilter<"Submission"> | $Enums.SubmissionStatus
   reviewComment?: Prisma.StringNullableWithAggregatesFilter<"Submission"> | string | null
+  rejectionReason?: Prisma.StringNullableWithAggregatesFilter<"Submission"> | string | null
   reviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Submission"> | Date | string | null
   studentId?: Prisma.StringWithAggregatesFilter<"Submission"> | string
   reviewedById?: Prisma.StringNullableWithAggregatesFilter<"Submission"> | string | null
@@ -323,6 +335,7 @@ export type SubmissionCreateInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -338,6 +351,7 @@ export type SubmissionUncheckedCreateInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   studentId: string
   reviewedById?: string | null
@@ -353,6 +367,7 @@ export type SubmissionUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -368,6 +383,7 @@ export type SubmissionUncheckedUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -383,6 +399,7 @@ export type SubmissionCreateManyInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   studentId: string
   reviewedById?: string | null
@@ -398,6 +415,7 @@ export type SubmissionUpdateManyMutationInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -411,6 +429,7 @@ export type SubmissionUncheckedUpdateManyInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -426,6 +445,7 @@ export type SubmissionCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewComment?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrder
@@ -441,6 +461,7 @@ export type SubmissionMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewComment?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrder
@@ -456,6 +477,7 @@ export type SubmissionMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewComment?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrder
@@ -585,6 +607,7 @@ export type SubmissionCreateWithoutStudentInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -599,6 +622,7 @@ export type SubmissionUncheckedCreateWithoutStudentInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   reviewedById?: string | null
   createdAt?: Date | string
@@ -623,6 +647,7 @@ export type SubmissionCreateWithoutReviewedByInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -637,6 +662,7 @@ export type SubmissionUncheckedCreateWithoutReviewedByInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   studentId: string
   createdAt?: Date | string
@@ -680,6 +706,7 @@ export type SubmissionScalarWhereInput = {
   description?: Prisma.StringFilter<"Submission"> | string
   status?: Prisma.EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
   reviewComment?: Prisma.StringNullableFilter<"Submission"> | string | null
+  rejectionReason?: Prisma.StringNullableFilter<"Submission"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Submission"> | Date | string | null
   studentId?: Prisma.StringFilter<"Submission"> | string
   reviewedById?: Prisma.StringNullableFilter<"Submission"> | string | null
@@ -711,6 +738,7 @@ export type SubmissionCreateManyStudentInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   reviewedById?: string | null
   createdAt?: Date | string
@@ -725,6 +753,7 @@ export type SubmissionCreateManyReviewedByInput = {
   description: string
   status?: $Enums.SubmissionStatus
   reviewComment?: string | null
+  rejectionReason?: string | null
   reviewedAt?: Date | string | null
   studentId: string
   createdAt?: Date | string
@@ -739,6 +768,7 @@ export type SubmissionUpdateWithoutStudentInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -753,6 +783,7 @@ export type SubmissionUncheckedUpdateWithoutStudentInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -767,6 +798,7 @@ export type SubmissionUncheckedUpdateManyWithoutStudentInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -781,6 +813,7 @@ export type SubmissionUpdateWithoutReviewedByInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -795,6 +828,7 @@ export type SubmissionUncheckedUpdateWithoutReviewedByInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -809,6 +843,7 @@ export type SubmissionUncheckedUpdateManyWithoutReviewedByInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
   reviewComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -825,6 +860,7 @@ export type SubmissionSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   description?: boolean
   status?: boolean
   reviewComment?: boolean
+  rejectionReason?: boolean
   reviewedAt?: boolean
   studentId?: boolean
   reviewedById?: boolean
@@ -842,6 +878,7 @@ export type SubmissionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   description?: boolean
   status?: boolean
   reviewComment?: boolean
+  rejectionReason?: boolean
   reviewedAt?: boolean
   studentId?: boolean
   reviewedById?: boolean
@@ -859,6 +896,7 @@ export type SubmissionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   description?: boolean
   status?: boolean
   reviewComment?: boolean
+  rejectionReason?: boolean
   reviewedAt?: boolean
   studentId?: boolean
   reviewedById?: boolean
@@ -876,6 +914,7 @@ export type SubmissionSelectScalar = {
   description?: boolean
   status?: boolean
   reviewComment?: boolean
+  rejectionReason?: boolean
   reviewedAt?: boolean
   studentId?: boolean
   reviewedById?: boolean
@@ -883,7 +922,7 @@ export type SubmissionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectName" | "repoUrl" | "liveLink" | "description" | "status" | "reviewComment" | "reviewedAt" | "studentId" | "reviewedById" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
+export type SubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectName" | "repoUrl" | "liveLink" | "description" | "status" | "reviewComment" | "rejectionReason" | "reviewedAt" | "studentId" | "reviewedById" | "createdAt" | "updatedAt", ExtArgs["result"]["submission"]>
 export type SubmissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   reviewedBy?: boolean | Prisma.Submission$reviewedByArgs<ExtArgs>
@@ -911,6 +950,7 @@ export type $SubmissionPayload<ExtArgs extends runtime.Types.Extensions.Internal
     description: string
     status: $Enums.SubmissionStatus
     reviewComment: string | null
+    rejectionReason: string | null
     reviewedAt: Date | null
     studentId: string
     reviewedById: string | null
@@ -1348,6 +1388,7 @@ export interface SubmissionFieldRefs {
   readonly description: Prisma.FieldRef<"Submission", 'String'>
   readonly status: Prisma.FieldRef<"Submission", 'SubmissionStatus'>
   readonly reviewComment: Prisma.FieldRef<"Submission", 'String'>
+  readonly rejectionReason: Prisma.FieldRef<"Submission", 'String'>
   readonly reviewedAt: Prisma.FieldRef<"Submission", 'DateTime'>
   readonly studentId: Prisma.FieldRef<"Submission", 'String'>
   readonly reviewedById: Prisma.FieldRef<"Submission", 'String'>
