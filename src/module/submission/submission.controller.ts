@@ -21,11 +21,39 @@ const postSubmission = catchAsync(
 );
 
 const getMySubmissions = catchAsync(
-	async (_req: Request, _res: Response, _next: NextFunction) => {},
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const user = req.user;
+
+		const result = await SubmissionService.getMySubmissions(
+			user?.userId as string,
+		);
+
+		return sendResponse(res, {
+			success: true,
+			statusCode: status.OK,
+			message: "My submissions retrieved successfully.",
+			data: result,
+		});
+	},
 );
 
 const getSingleSubmission = catchAsync(
-	async (_req: Request, _res: Response, _next: NextFunction) => {},
+	async (req: Request, res: Response, _next: NextFunction) => {
+		const { id } = req.params;
+		const user = req.user;
+
+		const result = await SubmissionService.getSingleSubmission(
+			id as string,
+			user,
+		);
+
+		return sendResponse(res, {
+			success: true,
+			statusCode: status.OK,
+			message: "Submission retrieved successfully.",
+			data: result,
+		});
+	},
 );
 
 export const SubmissionController = {

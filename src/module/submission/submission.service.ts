@@ -8,6 +8,7 @@ import { Role, SubmissionStatus, UserStatus } from "../../../prisma/generated/pr
 const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUser) => {
 	const studentId = user?.userId || payload.studentId;
 
+	// 1. Identity & Role authorization check
 	if (user && payload.studentId && user.userId !== payload.studentId) {
 		throw new AppError(
 			status.FORBIDDEN,
@@ -15,6 +16,7 @@ const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUse
 		);
 	}
 
+	// 2. Validate student account existence and eligibility
 	const student = await prisma.user.findUnique({
 		where: { id: studentId },
 	});
@@ -44,6 +46,7 @@ const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUse
 		);
 	}
 
+	// 3. Link consistency check: ensure liveLink and repoUrl are not identical
 	if (
 		payload.repoUrl.trim().toLowerCase() ===
 		payload.liveLink.trim().toLowerCase()
@@ -54,6 +57,7 @@ const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUse
 		);
 	}
 
+	// 4. Unique repository URL check
 	const existingRepo = await prisma.submission.findUnique({
 		where: { repoUrl: payload.repoUrl.trim() },
 	});
@@ -65,6 +69,7 @@ const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUse
 		);
 	}
 
+	// 5. Duplicate submission check for the same project
 	const existingSubmission = await prisma.submission.findFirst({
 		where: {
 			studentId,
@@ -91,6 +96,7 @@ const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUse
 		}
 	}
 
+	// 6. Create submission with enforced initial status
 	const submission = await prisma.submission.create({
 		data: {
 			projectName: payload.projectName.trim(),
@@ -115,9 +121,77 @@ const postSubmission = async (payload: TPostSubmissionPayload, user?: RequestUse
 	return submission;
 };
 
-const getMySubmissions = async () => {};
+const getMySubmissions = async (userId: string) => {
+	// Validate student account existence and status
+	const student = await prisma.user.findUnique({
+		where: { id: userId },
+	});
 
-const getSingleSubmission = async () => {};
+	if (!student) {
+		throw new AppError(status.NOT_FOUND, "Student account not found.");
+	}
+
+	if (student.status === UserStatus.BLOCKED) {
+		throw new AppError(
+			status.FORBIDDEN,
+			"Your account has been blocked. Please contact support.",
+		);
+	}
+
+	const submissions = await prisma.submission.findMany({
+		where: {
+			studentId: userId,
+		},
+		include: {
+			student: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+		},
+		orderBy: {
+			createdAt: "desc",
+		},
+	});
+
+	return submissions;
+};
+
+const getSingleSubmission = async (id: string, user?: RequestUser) => {
+	if (!id) {
+		throw new AppError(status.BAD_REQUEST, "Submission ID is required.");
+	}
+
+	const submission = await prisma.submission.findUnique({
+		where: { id },
+		include: {
+			student: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+		},
+	});
+
+	if (!submission) {
+		throw new AppError(status.NOT_FOUND, "Submission not found.");
+	}
+
+	if (user?.role === Role.STUDENT && submission.studentId !== user.userId) {
+		throw new AppError(
+			status.FORBIDDEN,
+			"You do not have permission to view this submission.",
+		);
+	}
+
+	return submission;
+};
 
 export const SubmissionService = {
 	postSubmission,
