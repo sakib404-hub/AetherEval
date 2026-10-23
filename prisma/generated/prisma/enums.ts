@@ -21,7 +21,8 @@ export type Role = (typeof Role)[keyof typeof Role]
 export const UserStatus = {
   ACTIVE: 'ACTIVE',
   PENDING_APPROVAL: 'PENDING_APPROVAL',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  BLOCKED: 'BLOCKED'
 } as const
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
