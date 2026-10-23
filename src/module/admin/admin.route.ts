@@ -7,6 +7,12 @@ import { AdminValidation } from "./admin.validation";
 
 const router = Router();
 
+
+router.get(
+	"/stats",
+	checkAuth(Role.ADMIN),
+	AdminController.getDashboardStats,
+);
 router.get(
 	"/get-all-mentors",
 	checkAuth(Role.ADMIN),

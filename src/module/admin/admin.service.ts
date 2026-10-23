@@ -1,7 +1,7 @@
 import status from "http-status";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utility/AppError";
-import { Role, UserStatus } from "../../../prisma/generated/prisma/enums";
+import { Role, SubmissionStatus, UserStatus } from "../../../prisma/generated/prisma/enums";
 import { Prisma } from "../../../prisma/generated/prisma/client";
 import { TUpdateMentorStatusPayload } from "./admin.validation";
 
@@ -109,13 +109,23 @@ const updateMentorStatus = async (
 		);
 	}
 
+	// Rejection reason is strictly mandatory whenever status is REJECTED
+	if (payload.status === UserStatus.REJECTED) {
+		if (!payload.rejectionReason || !payload.rejectionReason.trim()) {
+			throw new AppError(
+				status.BAD_REQUEST,
+				"Rejection reason is required when rejecting a mentor.",
+			);
+		}
+	}
+
 	const updatedMentor = await prisma.user.update({
 		where: { id: mentorId },
 		data: {
 			status: payload.status,
 			rejectionReason:
 				payload.status === UserStatus.REJECTED
-					? payload.rejectionReason?.trim() || "Application rejected by admin."
+					? payload.rejectionReason?.trim()
 					: null,
 		},
 		select: {
@@ -136,8 +146,79 @@ const updateMentorStatus = async (
 	return updatedMentor;
 };
 
+
+const getDashboardStats = async () => {
+	const [
+		totalUsers,
+		totalStudents,
+		activeStudents,
+		totalMentors,
+		activeMentors,
+		pendingMentors,
+		rejectedMentors,
+		blockedMentors,
+		totalSubmissions,
+		pendingSubmissions,
+		approvedSubmissions,
+		rejectedSubmissions,
+	] = await Promise.all([
+		prisma.user.count(),
+		prisma.user.count({ where: { role: Role.STUDENT } }),
+		prisma.user.count({
+			where: { role: Role.STUDENT, status: UserStatus.ACTIVE },
+		}),
+		prisma.user.count({ where: { role: Role.MENTOR } }),
+		prisma.user.count({
+			where: { role: Role.MENTOR, status: UserStatus.ACTIVE },
+		}),
+		prisma.user.count({
+			where: { role: Role.MENTOR, status: UserStatus.PENDING_APPROVAL },
+		}),
+		prisma.user.count({
+			where: { role: Role.MENTOR, status: UserStatus.REJECTED },
+		}),
+		prisma.user.count({
+			where: { role: Role.MENTOR, status: UserStatus.BLOCKED },
+		}),
+		prisma.submission.count(),
+		prisma.submission.count({
+			where: { status: SubmissionStatus.PENDING },
+		}),
+		prisma.submission.count({
+			where: { status: SubmissionStatus.APPROVED },
+		}),
+		prisma.submission.count({
+			where: { status: SubmissionStatus.REJECTED },
+		}),
+	]);
+
+	return {
+		users: {
+			total: totalUsers,
+			students: {
+				total: totalStudents,
+				active: activeStudents,
+			},
+			mentors: {
+				total: totalMentors,
+				active: activeMentors,
+				pendingApproval: pendingMentors,
+				rejected: rejectedMentors,
+				blocked: blockedMentors,
+			},
+		},
+		submissions: {
+			total: totalSubmissions,
+			pending: pendingSubmissions,
+			approved: approvedSubmissions,
+			rejected: rejectedSubmissions,
+		},
+	};
+};
+
 export const AdminServices = {
 	getAllMentors,
 	getMentorById,
-	updateMentorStatus
+	updateMentorStatus,
+	getDashboardStats,
 };

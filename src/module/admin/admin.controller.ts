@@ -62,8 +62,22 @@ const updateMentorStatus = catchAsync(
 );
 
 
+const getDashboardStats = catchAsync(
+	async (_req: Request, res: Response, _next: NextFunction) => {
+		const result = await AdminServices.getDashboardStats();
+
+		return sendResponse(res, {
+			success: true,
+			statusCode: status.OK,
+			message: "Admin dashboard stats retrieved successfully.",
+			data: result,
+		});
+	},
+);
+
 export const AdminController = {
 	getAllMentors,
 	getMentorById,
 	updateMentorStatus,
+	getDashboardStats,
 };
