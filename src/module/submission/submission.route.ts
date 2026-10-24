@@ -31,5 +31,11 @@ router.patch(
 	validateRequest(SubmissionValidation.updateSubmissionValidationSchema),
 	SubmissionController.editSubmission,
 );
+router.put(
+	"/:id",
+	checkAuth(Role.STUDENT),
+	validateRequest(SubmissionValidation.updateSubmissionValidationSchema),
+	SubmissionController.editSubmission,
+);
 
 export const SubmissionRouter = router;
